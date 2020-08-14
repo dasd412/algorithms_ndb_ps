@@ -20,7 +20,7 @@ public class Multiple_OR_Add {
             if(num==0||num==1){//숫자가 0또는 1이면 더한다.
                 max+=num;
             }
-            else if(max==0){//만약 아직 결과 값이 0이라면 수를 더한다.
+            else if(max==0||max==1){//만약 아직 결과 값이 0또는 1이라면 수를 더한다.
                 max+=num;
             }
             else{//그 외의 경우는 곱해야 가장 큰 수가 나온다.
