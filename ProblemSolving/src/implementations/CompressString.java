@@ -17,7 +17,8 @@ public class CompressString {
 
         int minSize=Integer.MAX_VALUE;
 
-        for(int unit=1;unit<=str.length()/2;unit++){//1개 단위 부터 문자열의 길이 단위까지 반복한다.
+
+        for(int unit=1;unit<=str.length()/2+1;unit++){//1개 단위 부터 문자열의 길이 단위/2+1까지 반복한다.
 
             int count=compress(str,unit);//문자열을 unit 단위로 압축한다.
 
@@ -60,8 +61,13 @@ public class CompressString {
            compressed.add(str.substring(i, str.length()));//나머지 채우기
        }
 
-       int count=str.length();//문자열의 길이
+       StringBuilder sb=new StringBuilder();//문자열 담기
+
        int equal=0;//같은 거 세는 변수
+
+        sb.append(compressed.get(0));
+
+
        for(i=1;i<compressed.size();i++){
 
 
@@ -71,10 +77,14 @@ public class CompressString {
            }
            else{//같지 않다면,
 
-               if(equal!=0){//같은 게 존재한다면,
-                   count-=(equal*unit);//문자열의 길이는 자르는 단위*같은 거 개수만큼 줄어듭니다.
-                   count++;//대신 숫자로 하나 표현되므로, 숫자 하나 개수만큼 문자열의 길이를 증가시켜줍니다.
+
+
+               if(equal!=0){//같은 것을 세고 있었다면, 그 수를 문자열에 담는다.
+
+                   sb.append(Integer.toString(equal+1));
+
                }
+               sb.append(compressed.get(i));//같지 않은 현재 인덱스 것을 담는다.
 
                equal=0;
            }
@@ -82,17 +92,13 @@ public class CompressString {
        }
 
        if(equal!=0){//남는 거 처리..
-           count-=(equal*unit);
-           count++;
+
+           sb.append(Integer.toString(equal+1));
        }
 
-        System.out.println("count: "+count+" unit"+unit);
 
-       for(i=0;i<compressed.size();i++){
-           System.out.print(compressed.get(i)+" ");
-       }
-        System.out.println();
 
-        return count;//문자열의 길이를 리턴합니다.
+
+        return sb.length();//문자열의 길이를 리턴합니다.
     }
 }
