@@ -17,7 +17,7 @@ public class CompressString {
 
         int minSize=Integer.MAX_VALUE;
 
-        for(int unit=1;unit<=str.length();unit++){//1개 단위 부터 문자열의 길이 단위까지 반복한다.
+        for(int unit=1;unit<=str.length()/2;unit++){//1개 단위 부터 문자열의 길이 단위까지 반복한다.
 
             int count=compress(str,unit);//문자열을 unit 단위로 압축한다.
 
@@ -35,9 +35,6 @@ public class CompressString {
 
     private static int compress(String str, int unit) {
 
-        if(unit==1){
-            return str.length();
-        }
 
         List<String>compressed=new ArrayList<>();
 
