@@ -195,27 +195,15 @@ public class PillarAndBeam {
         Arrays.sort(answer, new Comparator<int[]>() {
             @Override
             public int compare(int[] o1, int[] o2) {
-                if (o1[0] > o2[0]) {//x 좌표 기준
-                    return 1;
-                } else if(o1[0]==o2[0]) {
-                    if (o1[1] > o2[1]) {//y좌표 기준
-                        return 1;
-                    } else if(o1[1]==o2[1]){
-                        if(o1[2]>o2[2]){//기둥 우선
-                            return 1;
-                        }
-                        else{
-                            return -1;
-                        }
 
-                    }
-                    else{
-                        return -1;
+                int result=Integer.compare(o1[0],o2[0]);//x좌표 기준
+                if(result==0){
+                    result=Integer.compare(o1[1],o2[1]);//y좌표 기준
+                    if(result==0){
+                        result=Integer.compare(o1[2],o2[2]);//타입 기준
                     }
                 }
-                else{
-                    return -1;
-                }
+                return result;
             }
         });
 
@@ -236,55 +224,101 @@ public class PillarAndBeam {
     public static boolean canDoBeam(int x, int y, int[][]map, int command){
         //보는 교촤점 좌표를 기준으로 오른쪽 방향으로 설치 또는 삭제
 
-        if(x>=map.length-1){//바닥에는 설치 불가
-            return false;
-        }
-        if(command==DELETE&&y+1<map.length&&map[x][y+1]==BEAM){
-            return false;//오른쪽에 보가 있는데 삭제할 경우에는 불가.
-        }
+        if(command==CREATE){
 
-        //한 쪽 끝 부분이 기둥 위에 있다면
-        if(map[x+1][y]==PILLAR){
-            return true;
-        }
-        else if(y+1<map.length&&map[x+1][y+1]==PILLAR){
-            return true;
-        }
-        else if(y-1>=0&&map[x][y-1]==BEAM){//왼쪽에 이미 보가 있다면,
-
-            return true;
-        }
-        //양쪽 끝 부분이 다른 보와 동시에 연결되어 있다면,
-        else if(y-1>=0&&y+1<map.length&&map[x][y-1]==BEAM&&map[x][y+1]==BEAM){
-            return true;
+            return check(x,y,map,BEAM);
         }
         else{
-            return false;//그 외에는 불가
+
+            map[x][y]=BLANK;//삭제한다고 가정.
+
+
+            boolean canDo=true;
+
+            //맵 전체에 대해 다 돌려본다.
+            for(int i=0;i<map.length&canDo;i++) {
+
+                for(int j=0;j<map.length&canDo;j++) {
+                    if(map[i][j]!=BLANK){//빈 칸이 아니고
+                        if(!check(i,j,map,map[i][j])){//삭제가 안되면
+                            canDo=false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            map[x][y]=BEAM;//다시 원상복구
+
+            return canDo;
         }
+
 
     }
 
-    public static boolean canDoPillar(int x, int y, int[][]map, int command){
-        //기둥은 교차점 좌표를 기준으로 위쪽 방향으로 설치또는 삭제
-        //기둥이 바닥 위에 서 있는가.
-        if(x==map.length-1){
-            return true;
-        }
-        else{//바닥 위에 서 있지 않다면,
+    public static boolean check(int x, int y,int[][]map,int type) {
+        if (type == BEAM) {//보에 해당하는 경우
+            if (x + 1 < map.length && map[x + 1][y] == PILLAR) {
+                return true;
+            } else if (x + 1 < map.length && y + 1 < map.length && map[x + 1][y + 1] == PILLAR) {
+                return true;
+            }
+            //양쪽 끝 부분이 다른 보와 동시에 연결되어 있다면,
+            else if (y - 1 >= 0 && y + 1 < map.length && map[x][y - 1] == BEAM && map[x][y + 1] == BEAM) {
+                return true;
+            } else {
+                return false;//그 외에는 불가
+            }
+        } else {//기둥에 해당하는 경우
+            if (x == map.length - 1) {
+                return true;
+            }
+
             //다른 기둥 위에 있다면,
-            if(map[x+1][y]==PILLAR){
+            else if (map[x + 1][y] == PILLAR) {
                 return true;
             }
             //보의 한쪽 끝 부분 위에 있다면,
-            else if(y-1>=0&&map[x][y-1]==BEAM){
+            else if (y - 1 >= 0 && map[x][y - 1] == BEAM) {
                 return true;
-            }
-            else if(y+1<map.length&&map[x][y+1]==BEAM){
+            } else if (y + 1 < map.length && map[x][y + 1] == BEAM) {
                 return true;
-            }
-            else{//그 외에는 할 수 없다.
+            } else {//그 외에는 할 수 없다.
                 return false;
             }
         }
     }
+
+    public static boolean canDoPillar(int x, int y, int[][]map, int command) {
+        //기둥은 교차점 좌표를 기준으로 위쪽 방향으로 설치또는 삭제
+        if(command==CREATE) {
+        return check(x,y,map,PILLAR);
+        }
+        else {
+
+
+            map[x][y]=BLANK;//삭제한다고 가정.
+
+
+            boolean canDo=true;
+
+            //맵 전체에 대해 다 돌려본다.
+            for(int i=0;i<map.length&canDo;i++) {
+
+                for(int j=0;j<map.length&canDo;j++) {
+                    if(map[i][j]!=BLANK){//빈 칸이 아니고
+                        if(!check(i,j,map,map[i][j])){//삭제가 안되면
+                            canDo=false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            map[x][y]=PILLAR;//다시 원상복구
+
+            return canDo;
+        }
+    }
+
 }
